@@ -1,0 +1,311 @@
+<ui version="4.0" >
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>736</width>
+    <height>638</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Configurar campaña</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Identificador:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="identificador" >
+     <property name="palette" >
+      <palette>
+       <active>
+        <colorrole role="Text" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>142</red>
+           <green>142</green>
+           <blue>142</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>254</red>
+           <green>255</green>
+           <blue>253</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Text" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>142</red>
+           <green>142</green>
+           <blue>142</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>254</red>
+           <green>255</green>
+           <blue>253</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Text" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>0</red>
+           <green>0</green>
+           <blue>0</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="readOnly" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="3" row="0" column="2" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Periodo campaña</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QGroupBox" name="groupBox_2" >
+        <property name="title" >
+         <string>Inicio</string>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="1" column="0" >
+          <widget class="QTimeEdit" name="startTime" />
+         </item>
+         <item row="0" column="0" >
+          <widget class="QCalendarWidget" name="startDate" >
+           <property name="firstDayOfWeek" >
+            <enum>Qt::Monday</enum>
+           </property>
+           <property name="gridVisible" >
+            <bool>true</bool>
+           </property>
+           <property name="verticalHeaderFormat" >
+            <enum>QCalendarWidget::NoVerticalHeader</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3" >
+        <property name="title" >
+         <string>Fin</string>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="2" column="0" >
+          <widget class="QTimeEdit" name="endTime" />
+         </item>
+         <item row="0" column="0" >
+          <widget class="QCalendarWidget" name="endDate" >
+           <property name="firstDayOfWeek" >
+            <enum>Qt::Monday</enum>
+           </property>
+           <property name="gridVisible" >
+            <bool>true</bool>
+           </property>
+           <property name="verticalHeaderFormat" >
+            <enum>QCalendarWidget::NoVerticalHeader</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Nombre campaña:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="nombre" />
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QGroupBox" name="groupBox_4" >
+     <property name="title" >
+      <string>Mensaje</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="esMensaje" >
+        <property name="text" >
+         <string>Escribir mensaje</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QTextEdit" name="mensaje" />
+      </item>
+      <item row="2" column="0" colspan="2" >
+       <widget class="QRadioButton" name="esScript" >
+        <property name="text" >
+         <string>Usar script</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLineEdit" name="pathMensaje" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QPushButton" name="findMsgPathButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Seleccionar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QCheckBox" name="habilitada" >
+     <property name="text" >
+      <string>Habilitar campaña</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2" >
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QCheckBox" name="reenviar" >
+       <property name="text" >
+        <string>Volver a enviar mensaje si han pasado mas de </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="reenviarDelay" >
+       <property name="minimum" >
+        <number>1</number>
+       </property>
+       <property name="maximum" >
+        <number>100000</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>minutos</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="0" colspan="3" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>nombre</tabstop>
+  <tabstop>esMensaje</tabstop>
+  <tabstop>mensaje</tabstop>
+  <tabstop>esScript</tabstop>
+  <tabstop>pathMensaje</tabstop>
+  <tabstop>findMsgPathButton</tabstop>
+  <tabstop>startDate</tabstop>
+  <tabstop>startTime</tabstop>
+  <tabstop>endDate</tabstop>
+  <tabstop>endTime</tabstop>
+  <tabstop>habilitada</tabstop>
+  <tabstop>reenviar</tabstop>
+  <tabstop>reenviarDelay</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>identificador</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>317</x>
+     <y>628</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>385</x>
+     <y>628</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
