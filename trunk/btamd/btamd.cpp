@@ -200,7 +200,7 @@ void BtAM::Daemon::enviar(Campaign campaign, QString direccion)
 		QProcess script;
 		script.start(campaign.mensaje);
 		script.waitForFinished();
-		fileName = script.readAllStandardOutput();
+		fileName = script.readAllStandardOutput().trimmed();
 	}
 	if (fileName.isEmpty()) {
 		log.add(Log::ALERT,campaign,"El nombre del fichero a enviar esta vacio");
