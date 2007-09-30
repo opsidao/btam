@@ -17,57 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BTAMDAEMON_H
-#define BTAMDAEMON_H
+#ifndef LOG_H
+#define LOG_H
 
-#include <QMap>
-#include <QObject>
+#include <QString>
+#include <QList>
 
-#include "campaign.h"
-#include <QMutex>
-#include <QPair>
-#include <QtDBus/QDBusInterface>
+class Campaign;
+class CampaignLogEntry;
+/**
+	@author Juan González Aguilera <juan@aga-system.com>
+ */
+class Log
+{	
+	public:
+		enum Level {SENT,NOTSENT,ALERT,INFO};
+		void add(Level level, const Campaign &campaign, const QString &message);
+		QList<CampaignLogEntry> getLog();
+		
+		void syncToDisk();
+		void syncFromDisk();
 
-#include "log.h"
-namespace BtAM {
-	class Daemon: public QObject
-	{
-		Q_OBJECT
-		public:
-			Daemon(const QStringList &arguments);
-			~Daemon();
-
-			void addCampaign(const Campaign & campaign);
-			void removeCampaign(const Campaign & campaign);
-			void updateCampaign(const Campaign & campaign);
-			QList<Campaign> listCampaigns();
-			QList<CampaignLogEntry> campaignsLog();
-			QString nextId();
-		private slots:
-			void slotRemoteDeviceArrived(const QString &direccion, uint clase, short rssi);
-		private:
-			void parseArguments(const QStringList &arguments);
-			void syncToDisk();
-			void syncFromDisk();
-			
-			void aplicar(Campaign campaign, QString direccion);
-			void enviar(Campaign campaign,QString direccion);
-			
-			QDBusInterface *bluetoothManager;
-			QDBusInterface *bluetoothAdapter;
-			
-			QMutex campaignMutex;
-			///Asocia a un identificador de campaña una campaña
-			QMap<QString,Campaign> campaigns;
-			///Asocia a un identificador de campaña un mapa con parejas direccion/fecha
-			QMap<QString,QMap<QString,QDateTime> >  ultimosEnvios;
-			
-			Log log;
-			uint m_nextId;
-			
-			bool debugEnabled;
-	};
-
-}
+	private:
+		QString fromLevel(Level level);
+				
+		QList<CampaignLogEntry> log;
+};
 
 #endif

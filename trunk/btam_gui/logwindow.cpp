@@ -35,11 +35,10 @@ LogWindow::LogWindow(QWidget* parent,QList<CampaignLogEntry> log)
 			campaigns[logEntry.campaignId] = logEntry.campaignName;
 		}
 // 		qDebug() << "Row: " << i << " Id: " << logEntry.campaignName;
-		logTable->setItem(i,0,new QTableWidgetItem(logEntry.campaignId));
-		logTable->setItem(i,1,new QTableWidgetItem(logEntry.campaignName));
-		logTable->setItem(i,2,new QTableWidgetItem(logEntry.when));
-		logTable->setItem(i,3,new QTableWidgetItem(logEntry.titulo));
-		logTable->setItem(i,4,new QTableWidgetItem(logEntry.mensaje));
+		logTable->setItem(i,0,new QTableWidgetItem(logEntry.nivel));
+		logTable->setItem(i,1,new QTableWidgetItem(logEntry.campaignId+" - "+logEntry.campaignName));
+		logTable->setItem(i,2,new QTableWidgetItem(logEntry.when));		
+		logTable->setItem(i,3,new QTableWidgetItem(logEntry.mensaje));
 		i++;
 	}
 	logTable->setSortingEnabled(true);
@@ -72,7 +71,7 @@ void LogWindow::filtrarCampaign(int index)
 	for (int i = 0; i < logTable->rowCount();i++) {
 		if (filtro.isEmpty()) {
 			logTable->setRowHidden(i,false);
-		} else if (logTable->item(i,0)->text() == filtro) {
+		} else if (logTable->item(i,1)->text().split(" - ")[0] == filtro) {
 			logTable->setRowHidden(i,false);
 		} else {
 			logTable->setRowHidden(i,true);

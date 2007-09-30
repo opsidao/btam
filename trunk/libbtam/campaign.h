@@ -73,7 +73,7 @@ class CampaignLogEntry {
 		QString campaignId;
 		QString campaignName;
 		QString when;
-		QString titulo;
+		QString nivel;
 		QString mensaje;
 };
 
