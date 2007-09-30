@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>324</height>
+    <width>784</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -36,22 +36,17 @@
      </property>
      <column>
       <property name="text" >
-       <string>Id</string>
+       <string>Nivel</string>
       </property>
      </column>
      <column>
       <property name="text" >
-       <string>Nombre</string>
+       <string>Campaña</string>
       </property>
      </column>
      <column>
       <property name="text" >
        <string>Fecha/Hora</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Titulo</string>
       </property>
      </column>
      <column>

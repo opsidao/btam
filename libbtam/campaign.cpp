@@ -69,7 +69,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const CampaignLogEntry & entr
 			<< entry.campaignName
 			<< entry.when
 			<< entry.mensaje
-			<< entry.titulo;
+			<< entry.nivel;
 	argument.endStructure();
 	return argument;
 }
@@ -81,7 +81,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument,CampaignLogEntry &
 			>> entry.campaignName
 			>> entry.when
 			>> entry.mensaje
-			>> entry.titulo;
+			>> entry.nivel;
 	argument.endStructure();
 	return argument;
 }

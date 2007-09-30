@@ -24,6 +24,8 @@
 #include <QSettings>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusReply>
+#include <QProcess>
+#include "log.h"
 
 BtAM::Daemon::Daemon(const QStringList &arguments)
 	:bluetoothManager(0), bluetoothAdapter(0),m_nextId(0),debugEnabled(false)
@@ -106,7 +108,7 @@ QList<Campaign> BtAM::Daemon::listCampaigns()
 QList<CampaignLogEntry> BtAM::Daemon::campaignsLog()
 {
 	QMutexLocker lock(&campaignMutex);
-	return log;
+	return log.getLog();
 }
 
 QString BtAM::Daemon::nextId()
@@ -135,11 +137,6 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 	if (curr > QDateTime::fromString(campaign.fechaInicio) &&
 		   curr < QDateTime::fromString(campaign.fechaFin)) 
 	{
-		CampaignLogEntry logEntry;
-		logEntry.campaignId = campaign.id;
-		logEntry.campaignName = campaign.nombre;
-		logEntry.when = curr.toString();
-		
 		if (!ultimosEnvios.contains(campaign.id)) {
 			ultimosEnvios[campaign.id] = QMap<QString,QDateTime> ();
 		}
@@ -147,8 +144,8 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 			if (debugEnabled) {
 				qDebug() << "Campaña: " << campaign.nombre << ", enviando a " << direccion;
 			}
-			logEntry.titulo = "Nuevo receptor (" + direccion + ")";
-			logEntry.mensaje = "Mensaje enviado con exito";
+			log.add(Log::INFO,campaign,"Nuevo receptor (" + direccion + ")");
+			enviar(campaign,direccion);
 			ultimosEnvios[campaign.id].insert(direccion,curr);
 			
 		} else if(campaign.repetir) { //Los mensajes se envian otra vez, comprobemos si ha pasado sugiciente tiempo
@@ -157,12 +154,10 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 				if (debugEnabled) {
 					qDebug() << "Campaña: " << campaign.nombre << ", reenviando a " << direccion;
 				}
-				logEntry.titulo = "Receptor conocido (" + direccion + ")";
-				logEntry.mensaje = "Mensaje enviado con exito";
-				ultimosEnvios[campaign.id].insert(direccion,curr);
+				log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), reenviando");
+				enviar(campaign,direccion);
 			} else {
-				logEntry.titulo = "Receptor conocido (" + direccion + ")";
-				logEntry.mensaje = "Timeout aun no superado";
+				log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), timeout aun no superado");
 				if (debugEnabled) {
  					qDebug() << "No reenviando aun a " << direccion;
 				}
@@ -171,15 +166,18 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 			if (debugEnabled) {
 	 			qDebug() << "Ignorando a " << direccion << ", ya se le envio";
 			}
-			logEntry.titulo = "Receptor conocido (" + direccion + ")";
-			logEntry.mensaje = "Ignorado";
+			log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + ")");			
 		}
-		
-		log << logEntry;
+
 		syncToDisk();
 	} else if (debugEnabled) {
 		qDebug()  << "Campaña: " << campaign.nombre << ", fuera de fecha";
 	}
+}
+
+void BtAM::Daemon::enviar(Campaign campaign, QString direccion)
+{
+	
 }
 
 void BtAM::Daemon::parseArguments(const QStringList & arguments)
@@ -228,17 +226,7 @@ void BtAM::Daemon::syncToDisk()
 	}
 	settings.endGroup();
 	
-	settings.beginWriteArray("log");
-	for (int i = 0; i < log.size();i++) {
-		settings.setArrayIndex(i);
-		settings.setValue("campaignId",log[i].campaignId);
-		settings.setValue("campaignName",log[i].campaignName);
-		settings.setValue("when",log[i].when);
-		settings.setValue("titulo",log[i].titulo);
-		settings.setValue("mensaje",log[i].mensaje);
-	}
-	settings.endArray();
-	
+	log.syncToDisk();
 	settings.sync();
 }
 
@@ -274,20 +262,8 @@ void BtAM::Daemon::syncFromDisk()
 		}
 		settings.endArray();
 	}
+	log.syncFromDisk();
 	settings.endGroup();
 	
-	size = settings.beginReadArray("log");
-	for (int i = 0; i < size;i++) {
-		settings.setArrayIndex(i);
-		CampaignLogEntry entry;
-		entry.campaignId = settings.value("campaignId").toString();
-		entry.campaignName = settings.value("campaignName").toString();
-		entry.when = settings.value("when").toString();
-		entry.titulo = settings.value("titulo").toString();
-		entry.mensaje = settings.value("mensaje").toString();
-		log << entry;
-	}
-	settings.endArray();
 }
-
 
