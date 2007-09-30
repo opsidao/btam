@@ -20,6 +20,8 @@
 #include "btamd.h"
 #include <QDebug>
 #include <QDateTime>
+#include <QDir>
+#include <QFile>
 #include <QMutexLocker>
 #include <QSettings>
 #include <QtDBus/QDBusConnection>
@@ -177,7 +179,38 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 
 void BtAM::Daemon::enviar(Campaign campaign, QString direccion)
 {
+	qDebug() << "Direccion: " << direccion;
+	if (direccion != "00:1C:9A:3D:1B:12")
+		return;
 	
+	QProcess * obexftp = new QProcess(this);
+	QStringList arg;
+	arg << "--nopath" << "--noconn" << "--uuid" << "none" << "--bluetooth" << direccion << "--put";
+	
+	QString fileName;
+	if (campaign.mensajeOScript) { //Es mensaje...
+		fileName = QDir::tempPath()+campaign.nombre+".txt";
+		QFile file(fileName);
+		file.open(QFile::ReadWrite| QFile::Truncate |QFile::Text);
+		file.write(campaign.mensaje.toUtf8());
+		file.close();
+		//FIXME The file should be eventually removed after sending
+		//FIXME Possible conflicts in consequtive sents
+	} else { //Es script...
+		QProcess script;
+		script.start(campaign.mensaje);
+		script.waitForFinished();
+		fileName = script.readAllStandardOutput();
+	}
+	if (fileName.isEmpty()) {
+		log.add(Log::ALERT,campaign,"El nombre del fichero a enviar esta vacio");
+		return;
+	}
+	arg << fileName;
+	bluetoothAdapter->call("SetName",campaign.nombre);
+	obexftp->start("obexftp",arg);
+	log.add(Log::SENT,campaign,"Enviado");
+	//TODO Find a way to analyze the output of each process to see if it succeded
 }
 
 void BtAM::Daemon::parseArguments(const QStringList & arguments)
