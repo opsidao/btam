@@ -52,7 +52,7 @@ CampaignConfig::CampaignConfig(QWidget* parent,Campaign c)
 	reenviar->setChecked(c.repetir);
 	
 	reenviarDelay->setValue(c.repetirPeriodo);
-	QLineEdit *nombre;
+		
 	nombre->setFocus();
 	
 }
