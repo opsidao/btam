@@ -45,34 +45,38 @@ MainWindow::MainWindow ( QWidget* parent, Qt::WFlags fl )
 	
 	
 	REGISTER_CAMPAIGNS
-			remote = new QDBusInterface ("org.opsiland.btam","/org/opsiland/btam","org.opsiland.btam.Daemon");
+	remote = new QDBusInterface ("org.opsiland.btam","/org/opsiland/btam","org.opsiland.btam.Daemon");
 	if (remote->lastError().isValid()) {
-		setEnabled(false);
-		QDBusError error = remote->lastError();
-		QString msg = "Lo mas probable es que no se este ejecutando el demonio btamd <br><br> Error  : <i><b>"+error.name()+ "</b></i><br>Mensaje: <i><b>"+error.message()+"</b></i>";
-		QMessageBox::critical(this,"Imposible conectar al demonio btamd",msg);
-	} else {
-		QObject::connect(activeCampaigns,SIGNAL(itemSelectionChanged()),
-						 this, SLOT(slotSelectedItemChanged()));
-		QObject::connect(activeCampaigns,SIGNAL(cellDoubleClicked( int, int )),
-						 this, SLOT(slotEditCampaign()));
-		
-		QDBusReply<QList<Campaign> > reply = remote->call("listCampaigns");
-		if(reply.isValid())
-			updateCampaignList(reply.value());
-	
-		QObject::connect(addCampaign,SIGNAL(clicked()),
-						 this,SLOT(slotAddCampaign()));
-	
-		QObject::connect(removeCampaign,SIGNAL(clicked()),
-						 this,SLOT(slotRemoveCampaign()));
-	
-		QObject::connect(editCampaign,SIGNAL(clicked()),
-						 this,SLOT(slotEditCampaign()));
-		
-		QObject::connect(logButton,SIGNAL(clicked()),
-						 this,SLOT(slotLogWindow()));
+		sleep(3);
+		remote = new QDBusInterface ("org.opsiland.btam","/org/opsiland/btam","org.opsiland.btam.Daemon");
+		if (remote->lastError().isValid()) {
+			setEnabled(false);
+			QDBusError error = remote->lastError();
+			QString msg = "Lo mas probable es que no se este ejecutando el demonio btamd <br><br> Error  : <i><b>"+error.name()+ "</b></i><br>Mensaje: <i><b>"+error.message()+"</b></i>";
+			QMessageBox::critical(this,"Imposible conectar al demonio btamd",msg);
+			return;
+		}		
 	}
+	QObject::connect(activeCampaigns,SIGNAL(itemSelectionChanged()),
+					 this, SLOT(slotSelectedItemChanged()));
+	QObject::connect(activeCampaigns,SIGNAL(cellDoubleClicked( int, int )),
+					 this, SLOT(slotEditCampaign()));
+		
+	QDBusReply<QList<Campaign> > reply = remote->call("listCampaigns");
+	if(reply.isValid())
+		updateCampaignList(reply.value());
+	
+	QObject::connect(addCampaign,SIGNAL(clicked()),
+					 this,SLOT(slotAddCampaign()));
+	
+	QObject::connect(removeCampaign,SIGNAL(clicked()),
+					 this,SLOT(slotRemoveCampaign()));
+	
+	QObject::connect(editCampaign,SIGNAL(clicked()),
+					 this,SLOT(slotEditCampaign()));
+		
+	QObject::connect(logButton,SIGNAL(clicked()),
+					 this,SLOT(slotLogWindow()));
 }
 
 MainWindow::~MainWindow()
@@ -104,7 +108,7 @@ void MainWindow::slotRemoveCampaign()
                                        QString::fromUtf8("Confirmar eliminación"),
                                        QString::fromUtf8("¿Esta seguro de eliminar la campaña \"%1\"?").arg(campaign.nombre),
                                        QMessageBox::Ok,
-                                       QMessageBox::Cancel);
+				QMessageBox::Cancel);
 	if(result == QMessageBox::Ok)
 	{
 		QVariant var;
