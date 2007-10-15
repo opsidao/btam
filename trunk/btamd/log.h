@@ -32,16 +32,16 @@ class Log
 {	
 	public:
 		enum Level {SENT,NOTSENT,ALERT,INFO};
-		void add(Level level, const Campaign &campaign, const QString &message);
-		QList<CampaignLogEntry> getLog();
+		static void add(Level level, const Campaign &campaign, const QString &message);
+		static QList<CampaignLogEntry> getLog();
 		
-		void syncToDisk();
-		void syncFromDisk();
+		static void syncToDisk();
+		static void syncFromDisk();
 
 	private:
-		QString fromLevel(Level level);
+		static QString fromLevel(Level level);
 				
-		QList<CampaignLogEntry> log;
+		static QList<CampaignLogEntry> log;
 };
 
 #endif
