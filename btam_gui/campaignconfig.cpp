@@ -23,6 +23,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
+#include <QEventLoop>
+#include <QPointer>
 
 CampaignConfig::CampaignConfig(QWidget* parent,Campaign c)
 	: QDialog( parent)
@@ -143,6 +145,17 @@ bool ExecutableFilter::filterAcceptsRow(int source_row, const QModelIndex & sour
 	return (file.permissions() & QFile::ExeUser)!=0;
 }
 
+int CampaignConfig::exec()
+{
+	showFullScreen();
+
+	QEventLoop eventLoop;
+	QObject::connect(this,SIGNAL(finished( int )),&eventLoop,SLOT(quit()));
+	eventLoop.exec();
+		
+	int res = result();
+	return res;
+}
 
 
 
