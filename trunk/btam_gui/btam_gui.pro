@@ -15,11 +15,17 @@ CONFIG += qt \
 
 QT += core ui
 
+FORMS += campaigndialog.ui \
+logwindow.ui \
+mainwindow.ui
+
 INCLUDEPATH += ../libbtam
+
+INSTALLS += target
+
+target.path = /usr/bin
 
 LIBS += ../libbtam/liblibbtam.a
 
 TARGETDEPS += ../libbtam/liblibbtam.a
-FORMS += campaigndialog.ui \
-logwindow.ui \
-mainwindow.ui
+
