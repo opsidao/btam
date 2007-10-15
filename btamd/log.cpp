@@ -26,7 +26,7 @@
 #include <QSettings>
 
 #include "log.h"
-
+QList<CampaignLogEntry> Log::log = QList<CampaignLogEntry>();
 void Log::add(Level level, const Campaign &campaign, const QString & message)
 {
 	CampaignLogEntry entry;
