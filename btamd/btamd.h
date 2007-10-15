@@ -27,9 +27,23 @@
 #include <QMutex>
 #include <QPair>
 #include <QtDBus/QDBusInterface>
+#include <QProcess>
+
 
 #include "log.h"
 namespace BtAM {
+	class ObexFtpFinisher : public QObject
+	{
+		Q_OBJECT
+		public:
+			ObexFtpFinisher(QProcess *parent, const Campaign &campaign,const QString &direccion);
+		public slots:
+			void finished(int estado);
+		private:
+			QProcess proceso;
+			Campaign campaign;
+			QString direccion;
+	};
 	class Daemon: public QObject
 	{
 		Q_OBJECT
@@ -61,13 +75,9 @@ namespace BtAM {
 			QMap<QString,Campaign> campaigns;
 			///Asocia a un identificador de campaña un mapa con parejas direccion/fecha
 			QMap<QString,QMap<QString,QDateTime> >  ultimosEnvios;
-			
-			Log log;
-			uint m_nextId;
-			
-			bool debugEnabled;
-	};
 
+			uint m_nextId;
+	};
 }
 
 #endif
