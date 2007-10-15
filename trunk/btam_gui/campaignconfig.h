@@ -35,6 +35,7 @@ class CampaignConfig : public QDialog, private Ui::Dialog
 		CampaignConfig(QWidget* parent, QString id);
 		~CampaignConfig();
 		Campaign campaign();
+		int exec();
 	private:
 		void init();
 	private slots:

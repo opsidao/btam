@@ -125,7 +125,6 @@ void MainWindow::slotEditCampaign()
 {
 	Campaign campaign = campaigns[activeCampaigns->currentRow()];
 	CampaignConfig config(this,campaign);
-	
 	if (config.exec() == QDialog::Accepted) {
 		QVariant var;
 		var.setValue(config.campaign());
@@ -149,8 +148,9 @@ void MainWindow::slotLogWindow()
 	}
 
 
-	LogWindow dialog(this,log.value());
-	dialog.exec();
+	LogWindow *dialog = new LogWindow(this,log.value());
+	dialog->setAttribute(Qt::WA_DeleteOnClose,true);
+	dialog->showFullScreen();
 }
 
 void MainWindow::slotSelectedItemChanged()
