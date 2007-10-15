@@ -29,8 +29,10 @@
 #include <QProcess>
 #include "log.h"
 
+bool debugEnabled = false;
+
 BtAM::Daemon::Daemon(const QStringList &arguments)
-	:bluetoothManager(0), bluetoothAdapter(0),m_nextId(0),debugEnabled(false)
+	:bluetoothManager(0), bluetoothAdapter(0),m_nextId(0)
 {
 	parseArguments(arguments);
 	bluetoothManager = new QDBusInterface("org.bluez","/org/bluez","org.bluez.Manager",QDBusConnection::systemBus());
@@ -110,7 +112,7 @@ QList<Campaign> BtAM::Daemon::listCampaigns()
 QList<CampaignLogEntry> BtAM::Daemon::campaignsLog()
 {
 	QMutexLocker lock(&campaignMutex);
-	return log.getLog();
+	return Log::getLog();
 }
 
 QString BtAM::Daemon::nextId()
@@ -146,7 +148,7 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 			if (debugEnabled) {
 				qDebug() << "Campaña: " << campaign.nombre << ", enviando a " << direccion;
 			}
-			log.add(Log::INFO,campaign,"Nuevo receptor (" + direccion + ")");
+			Log::add(Log::INFO,campaign,"Nuevo receptor (" + direccion + ")");
 			enviar(campaign,direccion);
 			ultimosEnvios[campaign.id].insert(direccion,curr);
 			
@@ -154,12 +156,13 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 			QDateTime ultimoEnvio = ultimosEnvios[campaign.id].value(direccion);
 			if (ultimoEnvio.addSecs(campaign.repetirPeriodo*60) < curr) { //Reenviamos porque ya ha pasado el tiempo suficiente
 				if (debugEnabled) {
-					qDebug() << "Campaña: " << campaign.nombre << ", reenviando a " << direccion;
+					qDebug() << "Campaña: " << campaign.nombre << ", reenviando a " << direccion 
+							<< "ultimoEnvio = " << ultimoEnvio << " actual = " << curr;
 				}
-				log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), reenviando");
+				Log::add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), reenviando");
 				enviar(campaign,direccion);
 			} else {
-				log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), timeout aun no superado");
+				Log::add(Log::INFO,campaign,"Receptor conocido (" + direccion + "), timeout aun no superado");
 				if (debugEnabled) {
  					qDebug() << "No reenviando aun a " << direccion;
 				}
@@ -168,7 +171,7 @@ void BtAM::Daemon::aplicar(Campaign campaign, QString direccion)
 			if (debugEnabled) {
 	 			qDebug() << "Ignorando a " << direccion << ", ya se le envio";
 			}
-			log.add(Log::INFO,campaign,"Receptor conocido (" + direccion + ")");			
+			Log::add(Log::INFO,campaign,"Receptor conocido (" + direccion + ")");			
 		}
 
 		syncToDisk();
@@ -203,14 +206,14 @@ void BtAM::Daemon::enviar(Campaign campaign, QString direccion)
 		fileName = script.readAllStandardOutput().trimmed();
 	}
 	if (fileName.isEmpty()) {
-		log.add(Log::ALERT,campaign,"El nombre del fichero a enviar esta vacio");
+		Log::add(Log::ALERT,campaign,"El nombre del fichero a enviar esta vacio");
 		return;
 	}
 	arg << fileName;
 	bluetoothAdapter->call("SetName",campaign.nombre);
+	ultimosEnvios[campaign.id].insert(direccion,QDateTime::currentDateTime());
+	QObject::connect(obexftp,SIGNAL(finished( int )),new ObexFtpFinisher(obexftp,campaign,direccion),SLOT(finished(int)));
 	obexftp->start("obexftp",arg);
-	log.add(Log::SENT,campaign,"Enviado");
-	//TODO Find a way to analyze the output of each process to see if it succeded
 }
 
 void BtAM::Daemon::parseArguments(const QStringList & arguments)
@@ -259,7 +262,7 @@ void BtAM::Daemon::syncToDisk()
 	}
 	settings.endGroup();
 	
-	log.syncToDisk();
+	Log::syncToDisk();
 	settings.sync();
 }
 
@@ -295,8 +298,34 @@ void BtAM::Daemon::syncFromDisk()
 		}
 		settings.endArray();
 	}
-	log.syncFromDisk();
+	Log::syncFromDisk();
 	settings.endGroup();
 	
+}
+
+/**************** ObexFtpFinisher *************/
+
+BtAM::ObexFtpFinisher::ObexFtpFinisher(QProcess *parent, const Campaign &campaign,const QString &direccion)
+	:QObject(parent),proceso(parent),campaign(campaign),direccion(direccion)
+{
+}
+
+void BtAM::ObexFtpFinisher::finished(int estado)
+{
+	QString out = proceso.readAllStandardError();
+	if (estado == 0) { //Enviado correctamente
+		if(debugEnabled)
+		{
+			qDebug() << "Campaña : " << campaign.id << ", mensaje enviado con exito a " << direccion;
+		}
+		Log::add(Log::SENT,campaign,out);
+	} else { //Falló el envio
+		if(debugEnabled)
+		{
+			qDebug() << "Campaña : " << campaign.id << ", no se pudo enviar el mensaje a " << direccion;
+		}
+		Log::add(Log::NOTSENT,campaign,out);	
+	}
+	deleteLater();
 }
 
