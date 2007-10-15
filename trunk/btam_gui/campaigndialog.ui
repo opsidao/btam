@@ -86,6 +86,9 @@
        </disabled>
       </palette>
      </property>
+     <property name="toolTip" >
+      <string>&lt;p>Identificador unico de campaña.&lt;/P>&lt;p>&lt;b>No editable&lt;/b>&lt;/p></string>
+     </property>
      <property name="text" >
       <string/>
      </property>
@@ -102,6 +105,9 @@
      <layout class="QVBoxLayout" >
       <item>
        <widget class="QGroupBox" name="groupBox_2" >
+        <property name="toolTip" >
+         <string>&lt;p> Fecha y hora en la que comienza esta campaña&lt;/p></string>
+        </property>
         <property name="title" >
          <string>Inicio</string>
         </property>
@@ -127,6 +133,9 @@
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox_3" >
+        <property name="toolTip" >
+         <string>&lt;p> Fecha y hora en la que finaliza esta campaña&lt;/p></string>
+        </property>
         <property name="title" >
          <string>Fin</string>
         </property>
@@ -161,7 +170,11 @@
     </widget>
    </item>
    <item row="1" column="1" >
-    <widget class="QLineEdit" name="nombre" />
+    <widget class="QLineEdit" name="nombre" >
+     <property name="toolTip" >
+      <string>&lt;p>Cuando se envie el mansaje, este sera el nombre del dispositivo que lo envia&lt;/p></string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0" colspan="2" >
     <widget class="QGroupBox" name="groupBox_4" >
@@ -171,6 +184,9 @@
      <layout class="QGridLayout" >
       <item row="0" column="0" >
        <widget class="QRadioButton" name="esMensaje" >
+        <property name="toolTip" >
+         <string>Escriba directamente el mensaje que desea enviar</string>
+        </property>
         <property name="text" >
          <string>Escribir mensaje</string>
         </property>
@@ -184,6 +200,9 @@
       </item>
       <item row="2" column="0" colspan="2" >
        <widget class="QRadioButton" name="esScript" >
+        <property name="toolTip" >
+         <string>&lt;P>Permite utilizar un programa externo para crear los mensajes a enviar&lt;/p>&lt;p>El ejecutable seleccionado debe escribir el nombre del fichero a enviar en la salida estandar al ser ejecutado&lt;/p></string>
+        </property>
         <property name="text" >
          <string>Usar script</string>
         </property>
@@ -220,6 +239,9 @@
     <layout class="QHBoxLayout" >
      <item>
       <widget class="QCheckBox" name="reenviar" >
+       <property name="toolTip" >
+        <string>&lt;p>Si se activa esta opción se volvera a enviar esta campaña una vez transcurrido el tiempo indicado&lt;/p></string>
+       </property>
        <property name="text" >
         <string>Volver a enviar mensaje si han pasado mas de </string>
        </property>
@@ -227,6 +249,12 @@
      </item>
      <item>
       <widget class="QSpinBox" name="reenviarDelay" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>&lt;p>Si se activa esta opción se volvera a enviar esta campaña una vez transcurrido el tiempo indicado&lt;/p></string>
+       </property>
        <property name="minimum" >
         <number>1</number>
        </property>
@@ -304,6 +332,22 @@
     <hint type="destinationlabel" >
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reenviar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>reenviarDelay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>410</x>
+     <y>583</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>528</x>
+     <y>578</y>
     </hint>
    </hints>
   </connection>
